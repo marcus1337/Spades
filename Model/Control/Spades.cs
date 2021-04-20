@@ -47,6 +47,8 @@ namespace Spades
         public void addBid(int bid)
         {
             bidding.addBid(bid);
+            if (!isBidPhase())
+                deal.book.setPlayerStarter(bidding.getPlayerTurn());
         }
 
         public void calculateAndStoreResults()
@@ -77,6 +79,11 @@ namespace Spades
             return deal.book.getPlayedCards();
         }
 
+        public Card getBestPlayedCard()
+        {
+            return deal.book.getBestPlayedCard();
+        }
+
         public List<int> getPossibleBids(int playerIndex)
         {
             List<int> possibleBids = new List<int>();
@@ -96,11 +103,53 @@ namespace Spades
             return possibleBids;
         }
 
-        private Team getTeamFromPlayerIndex(int playerIndex)
+        public Team getTeamFromPlayerIndex(int playerIndex)
         {
             if (playerIndex == 0 || playerIndex == 2)
                 return team1;
             return team2;
+        }
+
+        public Player getTeamPlayer(int playerIndex)
+        {
+            return players[(playerIndex + 2) % 4];
+        }
+
+        public int getEnemyTeamGoalTricks(int playerIndex)
+        {
+            int enemyIndex1 = (playerIndex + 1) % 4;
+            return getTeamGoalTricks(enemyIndex1);
+        }
+
+        public int getEnemyTeamTakenTricks(int playerIndex)
+        {
+            int enemyIndex1 = (playerIndex + 1) % 4;
+            return getTeamTakenTricks(enemyIndex1);
+        }
+
+        public int getTeamTakenTricks(int playerIndex)
+        {
+            int teamPlayerIndex = (playerIndex + 2) % 4;
+            int sum = 0;
+            if(players[playerIndex].getBid() == 0)
+                sum += deal.tricks[playerIndex];
+            if(players[teamPlayerIndex].getBid() == 0)
+                sum += deal.tricks[teamPlayerIndex];
+            return sum;
+        }
+
+        public int getTeamGoalTricks(int playerIndex)
+        {
+            int teamPlayerIndex = (playerIndex + 2) % 4;
+            int sum = 0;
+            sum += players[playerIndex].getBid();
+            sum += players[teamPlayerIndex].getBid();
+            return sum;
+        }
+
+        public bool isOtherCardBetter(Card bestCard, Card otherCard)
+        {
+            return deal.book.isOtherCardBetter(bestCard, otherCard);
         }
 
         public bool canBlindNilBid(int playerIndex)

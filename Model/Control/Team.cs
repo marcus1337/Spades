@@ -12,6 +12,11 @@ namespace Spades
         private Player player1, player2;
         private int bagsTotal;
 
+        public int getCurrentTotalBid()
+        {
+            return player1.getBid() + player2.getBid();
+        }
+
         public int getBagsTotal()
         {
             return bagsTotal;

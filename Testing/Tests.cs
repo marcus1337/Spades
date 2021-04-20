@@ -39,7 +39,7 @@ namespace Spades.Testing
 
             for (int i = 0; i < 4; i++)
                 if (spades.hasBid(i))
-                    return false;
+                    throw new Exception("BIDDING TEST");
 
             int turnStart = spades.getPlayerTurn();
             List<int> bids = new List<int>();
@@ -51,13 +51,13 @@ namespace Spades.Testing
             }
 
             if (spades.getPlayerTurn() != turnStart)
-                return false;
+                throw new Exception("BIDDING TEST");
             if (spades.isBidPhase())
-                return false;
+                throw new Exception("BIDDING TEST");
 
             for (int i = 0; i < 4; i++)
                 if (spades.players[(turnStart + i) % 4].getBid() != bids[i])
-                    return false;
+                    throw new Exception("BIDDING TEST");
 
             return true;
         }
@@ -81,11 +81,7 @@ namespace Spades.Testing
                 if (!spades.isBookFinished())
                     return false;
 
-                List<Card> cards = spades.getPlayedCards();
-                foreach (Card card in cards)
-                {
-                    Console.WriteLine(card.ToString());
-                }
+                printPlayedBookCards();
 
                 spades.startNextBook();
                 Console.WriteLine("-------\t" + (i + 1).ToString());
@@ -99,16 +95,68 @@ namespace Spades.Testing
             return true;
         }
 
+        private void printPlayedBookCards()
+        {
+            List<Card> cards = spades.getPlayedCards();
+            foreach (Card card in cards)
+            {
+                Console.WriteLine(card.ToString());
+            }
+        }
+
+        private bool testAI()
+        {
+            initVariables();
+
+            for (int i = 1; i <= 4; i++)
+            {
+                int theBid = Utils.Instance.rnd.Next(1, 5);
+                spades.addBid(theBid);
+            }
+
+            List<AI> ais = new List<AI>();
+            ais.Add(new AI(0));
+            ais.Add(new AI(1));
+            ais.Add(new AI(2));
+            ais.Add(new AI(3));
+
+
+            for (int i = 0; i < 13; i++)
+            {
+                spades.playCard(ais[spades.getPlayerTurn()].drawCard(spades));
+                spades.playCard(ais[spades.getPlayerTurn()].drawCard(spades));
+                spades.playCard(ais[spades.getPlayerTurn()].drawCard(spades));
+                spades.playCard(ais[spades.getPlayerTurn()].drawCard(spades));
+
+                printPlayedBookCards();
+
+                if (!spades.isBookFinished())
+                    throw new Exception("AI TEST1");
+
+                spades.startNextBook();
+                Console.WriteLine("-------\t" + (i + 1).ToString());
+            }
+
+            if (!spades.isRoundFinished())
+                throw new Exception("AI TEST2");
+
+            return true;
+        }
+
         public void testAll()
         {
-            if (!testCardAssigning())
+
+           /* if (!testCardAssigning())
                 throw new Exception("UNIQUE CARDS TEST");
 
             if (!testBidding())
                 throw new Exception("BIDDING TEST");
 
             if(!testBook())
-                throw new Exception("BOOKING TEST");
+                throw new Exception("BOOKING TEST");*/
+
+            if (!testAI())
+                throw new Exception("AI TEST");
 
             Console.WriteLine("TESTS OK!");
         }

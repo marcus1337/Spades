@@ -17,12 +17,17 @@ namespace Spades
         public Book(int playerFirst)
         {
             playedCards = new List<Card>();
-            this.playerFirst = playerFirst;
+            this.playerFirst = playerTurn = playerFirst;
         }
 
         public int getPlayerTurn()
         {
             return playerTurn;
+        }
+
+        public void setPlayerStarter(int playerTurn)
+        {
+            this.playerTurn = this.playerFirst = playerTurn;
         }
 
         public int getTrickWinIndex()
@@ -42,13 +47,24 @@ namespace Spades
             return playedCards.Count == 4;
         }
 
-        private bool isOtherCardBetter(Card bestCard, Card otherCard)
+        public bool isOtherCardBetter(Card bestCard, Card otherCard)
         {
             if (bestCard.getSuit() != Suit.Spades && otherCard.getSuit() == Suit.Spades)
                 return true;
             if (otherCard.getSuit() == bestCard.getSuit() && otherCard.getRank() > bestCard.getRank())
                 return true;
             return false;
+        }
+
+        public Card getBestPlayedCard()
+        {
+            if (playedCards.Count == 0)
+                return null;
+            Card bestCard = playedCards[0];
+            for (int i = 1; i < playedCards.Count; i++)
+                if (isOtherCardBetter(bestCard, playedCards[i]))
+                    bestCard = playedCards[i];
+            return bestCard;
         }
 
         private int getBookWinnerIndex()
