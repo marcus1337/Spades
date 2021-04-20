@@ -9,10 +9,11 @@ namespace Spades
 
         private int getNilScore(Player player, int numTricks)
         {
+            int multiplier = player.isBlindBid() ? 1 : 2;
             if (player.getBid() == 0 && numTricks > 0)
-                return -100;
+                return -100 * multiplier;
             if (player.getBid() == 0 && numTricks == 0)
-                return 100;
+                return 100 * multiplier;
             return 0;
         }
         private Tuple<int, int> getTeamNonNilScoreAndBags(Player player1, Player player2, int numTricks1, int numTricks2)
@@ -42,6 +43,13 @@ namespace Spades
             teamScore += getNilScore(team.getPlayer1(), numTricks1);
             teamScore += getNilScore(team.getPlayer2(), numTricks2);
             Tuple<int, int> scoreAndBags = getTeamNonNilScoreAndBags(team.getPlayer1(), team.getPlayer2(), numTricks1, numTricks2);
+            teamScore = handleBags(team, teamScore, scoreAndBags);
+            team.addScore(teamScore);
+            team.addBid();
+        }
+
+        private int handleBags(Team team, int teamScore, Tuple<int, int> scoreAndBags)
+        {
             teamScore += scoreAndBags.Item1;
             team.addTotalBag(scoreAndBags.Item2);
             if (team.getBagsTotal() > 10)
@@ -49,12 +57,8 @@ namespace Spades
                 teamScore -= 100;
                 team.setBagsTotal(team.getBagsTotal() - 10);
             }
-
             team.addBag(scoreAndBags.Item2);
-            team.addScore(teamScore);
-            team.addBid();
+            return teamScore;
         }
-
-
     }
 }

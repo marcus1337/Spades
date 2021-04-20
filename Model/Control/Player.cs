@@ -8,8 +8,19 @@ namespace Spades
     {
         private Hand hand;
         private int bid;
+        private bool blindBid;
 
         private string name;
+
+        public bool isBlindBid()
+        {
+            return blindBid;
+        }
+
+        public void setBlindBid(bool blindBid)
+        {
+            this.blindBid = blindBid;
+        }
 
         public string getName()
         {

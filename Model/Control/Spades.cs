@@ -77,6 +77,40 @@ namespace Spades
             return deal.book.getPlayedCards();
         }
 
+        public List<int> getPossibleBids(int playerIndex)
+        {
+            List<int> possibleBids = new List<int>();
+            possibleBids.Add(0);
+            int friendIndex = (playerIndex + 2) % 4;
+            if (!hasBid(friendIndex) || (hasBid(friendIndex) && players[friendIndex].getBid() == 0))
+            {
+                for (int i = 1; i <= 10; i++)
+                    possibleBids.Add(i);
+            }
+            else
+            {
+                int maxBid = Math.Min (13 - players[friendIndex].getBid(), 10);
+                for (int i = 1; i <= maxBid; i++)
+                    possibleBids.Add(i);
+            }
+            return possibleBids;
+        }
+
+        private Team getTeamFromPlayerIndex(int playerIndex)
+        {
+            if (playerIndex == 0 || playerIndex == 2)
+                return team1;
+            return team2;
+        }
+
+        public bool canBlindNilBid(int playerIndex)
+        {
+            Team playerIndexTeam = getTeamFromPlayerIndex(playerIndex);
+            Team otherTeam = getTeamFromPlayerIndex((playerIndex + 1) % 4);
+            int diff = playerIndexTeam.getScore() - otherTeam.getScore();
+            return diff <= -100;
+        }
+
         public List<Card> getPlayableCards(int playerIndex)
         {
             List<Card> result = new List<Card>();
