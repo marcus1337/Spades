@@ -9,6 +9,24 @@ namespace Spades
         private int playerIndex;
         private NeuralNet neuralNet;
 
+        public AI copy()
+        {
+            AI tmpAI = new AI(playerIndex);
+            tmpAI.setNeuralNet(getNeuralNet().copy());
+            tmpAI.setPlayerIndex(playerIndex);
+            return tmpAI;
+        }
+
+        public NeuralNet getNeuralNet()
+        {
+            return neuralNet;
+        }
+
+        public void setNeuralNet(NeuralNet neuralNet)
+        {
+            this.neuralNet = neuralNet;
+        }
+
         public void setPlayerIndex(int playerIndex)
         {
             this.playerIndex = playerIndex;

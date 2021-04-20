@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spades.Simulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -143,6 +144,17 @@ namespace Spades.Testing
             return true;
         }
 
+        public bool testSimulation()
+        {
+            AI ai1 = new AI(0);
+            AI ai2 = new AI(0);
+
+            BotFightSim fightSim = new BotFightSim();
+            AI winnerAI = fightSim.getBestAI(ai1, ai2);
+
+            return true;
+        }
+
         public void testAll()
         {
 
@@ -155,8 +167,11 @@ namespace Spades.Testing
             if(!testBook())
                 throw new Exception("BOOKING TEST");*/
 
-            if (!testAI())
-                throw new Exception("AI TEST");
+            //if (!testAI())
+            //    throw new Exception("AI TEST");
+
+            if (!testSimulation())
+                throw new Exception("SIM TEST");
 
             Console.WriteLine("TESTS OK!");
         }

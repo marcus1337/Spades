@@ -73,6 +73,7 @@ namespace Spades
             this.player2 = player2;
             bids = new List<Tuple<int, int>>();
             scores = new List<int>();
+            bags = new List<int>();
             bagsTotal = 0;
         }
 

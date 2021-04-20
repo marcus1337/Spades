@@ -10,6 +10,36 @@ namespace Spades
         private float[] hiddenNodes, outputNodes;
         private float[] edgesAToB, edgesBToC;
 
+        public void setHiddenLayer(float[] nodes)
+        {
+            this.hiddenNodes = (float[])nodes.Clone();
+        }
+
+        public void setOutputLayer(float[] nodes)
+        {
+            this.outputNodes = (float[])nodes.Clone();
+        }
+
+        public void setEdgesToLayer1(float[] nodes)
+        {
+            this.edgesAToB = (float[])nodes.Clone();
+        }
+
+        public void setEdgesToLayer2(float[] nodes)
+        {
+            this.edgesBToC = (float[])nodes.Clone();
+        }
+
+        public NeuralNet copy()
+        {
+            NeuralNet nn = new NeuralNet();
+            nn.setHiddenLayer(hiddenNodes);
+            nn.setOutputLayer(outputNodes);
+            nn.setEdgesToLayer1(edgesAToB);
+            nn.setEdgesToLayer2(edgesBToC);
+            return nn;
+        }
+
         public NeuralNet()
         {
             reset();
