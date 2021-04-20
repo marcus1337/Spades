@@ -4,70 +4,25 @@ using System.Text;
 
 namespace Spades
 {
-    [Serializable]
     public class AI
     {
         private int playerIndex;
-
-        private float[] hiddenNodes, outputNodes;
-        private float[] edgesAToB, edgesBToC;
+        private NeuralNet neuralNet;
 
         public void setPlayerIndex(int playerIndex)
         {
             this.playerIndex = playerIndex;
         }
 
-        private void resetBuckets()
-        {
-            hiddenNodes = new float[4];
-            outputNodes = new float[2];
-            edgesAToB = new float[16];
-            edgesBToC = new float[8];
-        }
-        private int propagateNetworkAndGetAction(float[] inputNodes)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    hiddenNodes[j] += inputNodes[i] * edgesAToB[i * 4 + j];
-                }
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                hiddenNodes[i] = Math.Max(0, hiddenNodes[i]);
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    outputNodes[j] += hiddenNodes[i] * edgesBToC[i * 2 + j];
-                }
-            }
-            int maxIndex = 0;
-            float maxOutputValue = outputNodes[0];
-            for (int i = 1; i < 2; i++)
-            {
-                if (outputNodes[i] > maxOutputValue)
-                {
-                    maxIndex = i;
-                    maxOutputValue = outputNodes[i];
-                }
-            }
-
-            return maxIndex;
-        }
-
         public AI(int playerIndex)
         {
             this.playerIndex = playerIndex;
-            resetBuckets();
+            neuralNet = new NeuralNet();
         }
 
         private bool canSabotageEnemyNilBid(Spades spades)
         {
-            return spades.players[(playerIndex+1)%4].getBid() == 0 || spades.players[(playerIndex + 3) % 4].getBid() == 0;
+            return spades.players[(playerIndex + 1) % 4].getBid() == 0 || spades.players[(playerIndex + 3) % 4].getBid() == 0;
         }
 
         private bool canSabotageEnemyFromReachingTotalBid(Spades spades)
@@ -125,7 +80,7 @@ namespace Spades
             if (leadCard == null)
                 return true;
             List<Card> playableCards = spades.getPlayableCards(playerIndex);
-            foreach(Card card in playableCards)
+            foreach (Card card in playableCards)
             {
                 if (spades.isOtherCardBetter(leadCard, card))
                     return true;
@@ -138,7 +93,7 @@ namespace Spades
         {
             List<Card> loseCards = getLosingCards(spades);
             Card bestCard = loseCards[0];
-            foreach(Card card in loseCards)
+            foreach (Card card in loseCards)
             {
                 if (card.getRank() > bestCard.getRank())
                     bestCard = card;
@@ -150,7 +105,7 @@ namespace Spades
         {
             List<Card> playableCards = spades.getPlayableCards(playerIndex);
             Card highest = playableCards[0];
-            foreach(Card card in playableCards)
+            foreach (Card card in playableCards)
             {
                 if (spades.isOtherCardBetter(highest, card))
                     highest = card;
@@ -193,14 +148,20 @@ namespace Spades
 
         public Card drawCard(Spades spades)
         {
+            float[] neuralNetInput = getInputNodeData(spades);
+            int chosenAction = neuralNet.propagateNetworkAndGetAction(neuralNetInput);
+            if (chosenAction == 1)
+                return tryWinAction(spades);
+            return tryLoseAction(spades);
+        }
+
+        private float[] getInputNodeData(Spades spades)
+        {
             float canSabotage1 = canSabotageEnemyNilBid(spades) ? 1.0f : 0.0f;
             float canSabotage2 = canSabotageEnemyFromReachingTotalBid(spades) ? 1.0f : 0.0f;
             float needTricks1 = needMoreTricks(spades) ? 1.0f : 0.0f;
             float needTricks2 = partnerNeedMoreTricks(spades) ? 1.0f : 0.0f;
-            int chosenAction = propagateNetworkAndGetAction(new float[] { canSabotage1, canSabotage2, needTricks1, needTricks2 });
-            if (chosenAction == 1)
-                return tryWinAction(spades);    
-            return tryLoseAction(spades);
+            return new float[] { canSabotage1, canSabotage2, needTricks1, needTricks2 };
         }
 
         public int getBid(Spades spades)
