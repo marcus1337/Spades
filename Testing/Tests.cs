@@ -152,6 +152,9 @@ namespace Spades.Testing
             BotFightSim fightSim = new BotFightSim();
             AI winnerAI = fightSim.getBestAI(ai1, ai2);
 
+            AITrainer aITrainer = new AITrainer();
+            aITrainer.train();
+
             return true;
         }
 

@@ -166,6 +166,12 @@ namespace Spades
 
         public Card drawCard(Spades spades)
         {
+            if (needMoreTricks(spades) && canWinTrick(spades) && 
+                (getHighestPlayableCard(spades).getRank() == Rank.Ace || getHighestPlayableCard(spades).getRank() == Rank.King) )
+            {
+                return getHighestPlayableCard(spades);
+            }
+
             float[] neuralNetInput = getInputNodeData(spades);
             int chosenAction = neuralNet.propagateNetworkAndGetAction(neuralNetInput);
             if (chosenAction == 1)
@@ -203,7 +209,7 @@ namespace Spades
                 }
             }
 
-            if (numBids == 0 && Utils.Instance.rnd.Next(0, 2) == 1)
+            if (numBids == 0 && Utils.Instance.rnd.Next(0, 5) > 0)
                 numBids = 1;
 
             return numBids;

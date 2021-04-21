@@ -61,17 +61,18 @@ namespace Spades
         public void mutateEdges()
         {
             int numEdgesToMutate = Utils.Instance.rnd.Next(1, 6);
-            for(int i = 0; i < numEdgesToMutate; i++)
+            for (int i = 0; i < numEdgesToMutate; i++)
             {
                 if (Utils.Instance.rnd.Next(0, 3) == 0)
                 {
                     int linkIndex = Utils.Instance.rnd.Next(0, 8);
-                    edgesBToC[linkIndex] += (float) (Utils.Instance.rnd.NextDouble() - 0.5);
+                    edgesBToC[linkIndex] += (float)(Utils.Instance.rnd.NextDouble() - 0.5) / 5.0f;
                     edgesBToC[linkIndex] = Math.Clamp(edgesBToC[linkIndex], -1.0f, 1.0f);
                 }
-                else{
+                else
+                {
                     int linkIndex = Utils.Instance.rnd.Next(0, 16);
-                    edgesAToB[linkIndex] += (float)(Utils.Instance.rnd.NextDouble() - 0.5);
+                    edgesAToB[linkIndex] += (float)(Utils.Instance.rnd.NextDouble() - 0.5) / 5.0f;
                     edgesAToB[linkIndex] = Math.Clamp(edgesAToB[linkIndex], -1.0f, 1.0f);
                 }
             }

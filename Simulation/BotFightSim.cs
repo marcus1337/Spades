@@ -20,12 +20,22 @@ namespace Spades.Simulation
             return aiB2;
         }
 
+        public void getAIFightScores(AI ai1, AI ai2)
+        {
+            init(ai1, ai2);
+            for (int i = 0; i < 40; i++)
+                playADeal();
+
+            Console.WriteLine("SCORES: ");
+            Console.WriteLine(spades.team1.getScore());
+            Console.WriteLine(spades.team2.getScore());
+        }
 
         public AI getBestAI(AI ai1, AI ai2)
         {
             init(ai1, ai2);
 
-            for(int i = 0; i < 40; i++)
+            for(int i = 0; i < 50; i++)
                 playADeal();
 
             if (spades.team1.getScore() > spades.team2.getScore())
